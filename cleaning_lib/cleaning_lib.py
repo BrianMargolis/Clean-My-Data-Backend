@@ -62,7 +62,7 @@ def fuzzymatching(col):
 	#print "these are the indices of the similar strings: " + str(matched)
 	return matched
 
-def checkType(column, type):
+def checkType(column):
 	#we need to check to see if the column types match up, but everything comes in as unicode
 	#we try to convert each element in the column to a float. strings cannot be converted to floats, so we will convert it to a string instead.
 	numberCount = 0
