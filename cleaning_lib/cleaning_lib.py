@@ -1,15 +1,11 @@
-# 1. outlier detection
-# 2. fuzzy matching
-# 3. pattern matching
-
 import csv
 import json
+import re
+
 import numpy as np
 from fuzzywuzzy import fuzz
-#from pick import pick
 from sklearn.ensemble import IsolationForest as isolate
-import re
-#import pprint as pp
+
 
 def read_file(csv_file, json_file):
     jsonfile = open(json_file, 'wb')
@@ -23,7 +19,6 @@ def read_file(csv_file, json_file):
             jsonfile.write('\n')
     jsonfile.close()
     print(fieldnames)
-
 
 
 def get_columns(input_file, fieldnames, output_file):
@@ -42,24 +37,26 @@ def get_columns(input_file, fieldnames, output_file):
     inputfile.close()
     outputfile.close()
 
+
 def fuzzymatching(col):
     matched = []
     for x in range(len(col)):
-        for y in range(x+1, len(col)):
+        for y in range(x + 1, len(col)):
             fuzzyRatio = fuzz.ratio(col[x], col[y])
             if fuzzyRatio > 70:
                 matched.append([x, y])
                 print(str(col[x]) + " and " + str(col[y]) + " are similar: " + str(fuzzyRatio))
-                #print "are these two the same?"
+                # print "are these two the same?"
             else:
                 print(str(col[x]) + " and " + str(col[y]) + " are different: " + str(fuzzyRatio))
                 continue
     print("these are the indices of the similar strings: " + str(matched))
     return matched
 
-def checkType(column, type):
-    #we need to check to see if the column types match up, but everything comes in as unicode
-    #we try to convert each element in the column to a float. strings cannot be converted to floats, so we will convert it to a string instead.
+
+def checkType(column):
+    # we need to check to see if the column types match up, but everything comes in as unicode
+    # we try to convert each element in the column to a float. strings cannot be converted to floats, so we will convert it to a string instead.
     numberCount = 0
     letterCount = 0
     numberRows = []
@@ -79,10 +76,11 @@ def checkType(column, type):
             return column, numberRows
         else:
             return column, letterRows
-    #this function returns the cleaned column array
-    #it also returns the line numbers of the type we don't think it is (the lines where error might be)
+            # this function returns the cleaned column array
+            # it also returns the line numbers of the type we don't think it is (the lines where error might be)
 
-def outlier_detection(col, options):
+
+def outlier_detection(col):
     # isolation forest to detect outliers, options to be added
     arr = np.asarray(col)
     arr = arr.reshape(-1, 1)
@@ -97,22 +95,26 @@ def outlier_detection(col, options):
     print("outliers detected in line numbers: " + str(outlier_index))
     return outlier_index
 
+
 def detect_dup(col):
     # lets users choose what pk is by specifying col.
     dups = []
     for i in range(len(col)):
-        for j in range(i+1, len(col)):
+        for j in range(i + 1, len(col)):
             if col[i] == col[j]:
                 dups.append([i, j])
                 print("Are line " + str(i) + " and line " + str(j) + " duplicates?")
 
+
 def lower_all(col):
-    #standardize cases for further up detection/ row combine
+    # standardize cases for further up detection/ row combine
     return [item.lower for item in col]
 
+
 def strip_clean(col):
-    #strip clean, for example ice_cream and ice cream is the same thing
+    # strip clean, for example ice_cream and ice cream is the same thing
     return [" ".join(re.split('\s|; |, |\*|\n|_|-', item)) for item in col]
+
 
 def missing_non_numeric(col):
     # marks in missing non numerical values as missing, flags missing values
@@ -124,7 +126,8 @@ def missing_non_numeric(col):
     print(col)
     return missing
 
-def missing_numeric(col, options):
+
+def missing_numeric(col):
     # flags missing numeric data and fill with 0
     # filling with mean?
     missing = []
@@ -135,6 +138,7 @@ def missing_numeric(col, options):
     print(col)
     return missing
 
+
 def process_all_cols(input_file, f, output_file):
     # apply selected functions to all columns in file
     inputfile = open(input_file, 'rb')
@@ -144,7 +148,7 @@ def process_all_cols(input_file, f, output_file):
         temp_col = []
         temp_col = f(jsonobject.values()[0])
         print(temp_col)
-        json.dump({jsonobject.keys()[0]:temp_col}, outputfile)
+        json.dump({jsonobject.keys()[0]: temp_col}, outputfile)
     inputfile.close()
     outputfile.close()
 
@@ -153,43 +157,3 @@ def openFile(filepath):
     with open(filepath) as columns:
         listOfCols = json.load(columns)
         print(listOfCols[0])
-
-
-# def openFile(filepath):
-# 	with open(filepath) as columns:
-# 		listOfCols = json.load(columns)
-# 		#set column type flag, if type is 1 then it's numbers, if type is 2 then it's letters:
-# 		for x in listOfCols:
-# 			column_type = 0
-# 			currentCol = listOfCols[x]
-# 			typeChecked = typeChecking(currentCol, x)
-# 			z = typeChecked[0]
-# 			column_type = typeChecked[1]
-#
-# 			if column_type == type("str"):
-# 				title = "Would you like to check for potential misspelled entries?"
-# 				options = ["yes", "no"]
-# 				selected = pick(options, title)
-# 				print selected
-# 				if selected[0] == "yes":
-# 					y = fuzzymatching(z)
-# 					pp.pprint(y)
-#
-# 				title = "Would you like to check for any non-standard characters?"
-# 				options = ["yes", "no"]
-# 				selected = pick(options, title)
-# 				if selected[0] == "yes":
-# 					y = strip_clean(z)
-# 					pp.pprint("strip_clean " + str(y))
-# 				else:
-# 					continue
-# 			elif column_type == type(0.2):
-# 				xo = outlier_detection(z, [1])
-# 				pp.pprint("outliers detected " + str(xo))
-
-openFile('columns.json')
-
-# read_file('/Users/Allison/Desktop/clean_my_data/fruits.csv', '/Users/Allison/Desktop/clean_my_data/test1.json')
-#get_columns('/Users/Allison/Desktop/clean_my_data/test1.json', ['fruits', 'In_stock', 'quantity'], '/Users/Allison/Desktop/clean_my_data/columns1.json')
-
-#["distance from earth's center", 'depth', 'p-wave velocity', 's-wave velocity', 'density']
