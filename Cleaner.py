@@ -8,14 +8,19 @@ class Cleaner():
         self.file_path = file_path  # fully qualified path to the csv file on disk
         self.options = options  # object with necessary parameters for e
 
-    def clean(self):
+    def identify_errors(self):
+        pass
+        errors = []
         if self.options["Fuzzy Matching"]:
-            self.fuzzy_matching()
+            errors += self.fuzzy_matching()
 
         if self.options["Outlier Detection"]:
-            self.outlier_detection()
+            errors += self.outlier_detection()
 
         # etc.
+        return errors
+
+    def clean_data(self, errors):
         pass
 
     # Should overwrite the file, return nothing

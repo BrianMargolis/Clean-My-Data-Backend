@@ -27,15 +27,38 @@ def upload_file():
         return jsonify({"file_name": file_name})
 
 
-@app.route("/clean", methods=['POST'])
-def clean():
+@app.route("/identify_errors", methods=['POST'])
+def identify_errors():
     if request.method == "POST":
         json = request.json
         file_name = json["file_name"]
         options = json["options"]
         cleaner = Cleaner(file_name, options)
-        return send_from_directory(app.config['UPLOAD_FOLDER'], file_name)
+        cleaner.identify_errors()
 
+        download = "download" in json and json["download"]
+        if download:
+            return send_from_directory(app.config['UPLOAD_FOLDER'], file_name)
+        else:
+            # get bad line numbers from cleaner
+            pass
+
+
+@app.route("/clean_data", methods=['POST'])
+def clean_data():
+    if request.method == "POST":
+        json = request.json
+        file_name = json["file_name"]
+        errors = json["errors"]
+        cleaner = Cleaner(file_name, {})
+        cleaner.clean_data(errors)
+
+        download = "download" in json and json["download"]
+        if download:
+            return send_from_directory(app.config['UPLOAD_FOLDER'], file_name)
+        else:
+            # get bad line numbers from cleaner
+            pass
 
 def get_file_name():
     N = 15
