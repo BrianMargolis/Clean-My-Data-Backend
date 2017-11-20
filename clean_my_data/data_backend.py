@@ -167,7 +167,7 @@ def missing_non_numeric(col):
     for i in range(len(col)):
         if col[i] == "":
             col[i] = "missing"
-            missing.append[i]
+            missing.append[i]  # TODO: BUG
     print(col)
     return missing
 
@@ -179,7 +179,7 @@ def missing_numeric(col, options):
     for i in range(len(col)):
         if col[i] == '':
             col[i] = 0
-            missing.append[i]
+            missing.append[i]  # TODO: BUG
     print(col)
     return missing
 
