@@ -9,7 +9,7 @@ from fuzzywuzzy import fuzz
 #from pick import pick
 from sklearn.ensemble import IsolationForest as isolate
 import re
-#import pprint as pp
+import pprint as pp
 
 def read_file(csv_file, json_file):
 	jsonfile = open(json_file, 'wb')
@@ -54,12 +54,12 @@ def fuzzymatching(col):
 			fuzzyRatio = fuzz.ratio(col[x], col[y])
 			if fuzzyRatio > 70:
 				matched.append([x, y])
-				print str(col[x]) + " and " + str(col[y]) + " are similar: " + str(fuzzyRatio)
+				#print str(col[x]) + " and " + str(col[y]) + " are similar: " + str(fuzzyRatio)
 				#print "are these two the same?"
 			else:
-				print str(col[x]) + " and " + str(col[y]) + " are different: " + str(fuzzyRatio)
+				#print str(col[x]) + " and " + str(col[y]) + " are different: " + str(fuzzyRatio)
 				continue
-	print "these are the indices of the similar strings: " + str(matched)
+	#print "these are the indices of the similar strings: " + str(matched)
 	return matched
 
 def checkType(column, type):
@@ -147,7 +147,7 @@ def outlier_detection(col, options):
 	for i in range(len(forest_outliers)):
 		if forest_outliers[i] == -1: outlier_index.append(i)
 	for i in outlier_index:
-		print "is "+ str(col[i]) +" an outlier?"
+	#	print "is "+ str(col[i]) +" an outlier?"
 	print "outliers detected in line numbers: " + str(outlier_index)
 	return outlier_index
 
@@ -158,7 +158,7 @@ def detect_dup(col):
 		for j in range(i+1, len(col)):
 			if col[i] == col[j]:
 				dups.append([i, j])
-				print "Are line " + str(i) + " and line " + str(j) + " duplicates?"
+				#print "Are line " + str(i) + " and line " + str(j) + " duplicates?"
 
 # def detect_irrelevant(col, restriction):
 # 	# let users add restrictions to a certain col and remove lines from further processing
@@ -184,7 +184,7 @@ def missing_non_numeric(col):
 		if col[i] == "":
 			col[i] = "missing"
 			missing.append[i]
-	print col
+	print(col)
 	return missing
 
 def missing_numeric(col, options):
@@ -195,7 +195,7 @@ def missing_numeric(col, options):
 		if col[i] == '':
 			col[i] = 0
 			missing.append[i]
-	print col
+	print(col)
 	return missing
 
 def process_all_cols(input_file, f, output_file):
@@ -206,7 +206,7 @@ def process_all_cols(input_file, f, output_file):
 		jsonobject = json.loads(line)
 		temp_col = []
 		temp_col = f(jsonobject.values()[0])
-		print temp_col
+		print(temp_col)
 		json.dump({jsonobject.keys()[0]:temp_col}, outputfile)
 	inputfile.close()
 	outputfile.close()
