@@ -28,7 +28,8 @@ def write_file(csv_file, content):
 	with open(csv_file, 'ab') as csvfile:
 		file_writer = csv.writer(csvfile, delimeter=',')
 		for row in file_writer:
-			print row
+			print(row)
+
 
 def get_columns(input_file, fieldnames, output_file):
 	inputfile = open(input_file, 'rb')
@@ -41,7 +42,7 @@ def get_columns(input_file, fieldnames, output_file):
 			col.append(jsonobject[column])
 		inputfile.seek(0)
 		temp_dict[column] = col
-	print temp_dict
+	print(temp_dict)
 	json.dump(temp_dict, outputfile)
 	inputfile.close()
 	outputfile.close()
@@ -53,12 +54,12 @@ def fuzzymatching(col):
 			fuzzyRatio = fuzz.ratio(col[x], col[y])
 			if fuzzyRatio > 70:
 				matched.append([x, y])
-				print str(col[x]) + " and " + str(col[y]) + " are similar: " + str(fuzzyRatio)
-				#print "are these two the same?"
+				print(str(col[x]) + " and " + str(col[y]) + " are similar: " + str(fuzzyRatio))
+			#print "are these two the same?"
 			else:
-				print str(col[x]) + " and " + str(col[y]) + " are different: " + str(fuzzyRatio)
+				print(str(col[x]) + " and " + str(col[y]) + " are different: " + str(fuzzyRatio))
 				continue
-	print "these are the indices of the similar strings: " + str(matched)
+	print("these are the indices of the similar strings: " + str(matched))
 	return matched
 
 def typeChecking(col, colName):
@@ -75,8 +76,8 @@ def typeChecking(col, colName):
 			col[x] = str(col[x])
 			letterCount += 1
 
-	print "numberCount = " + str(numberCount)
-	print "letterCount = " + str(letterCount)
+	print("numberCount = " + str(numberCount))
+	print("letterCount = " + str(letterCount))
 
 	if numberCount > letterCount:
 		majority = "numbers"
@@ -93,13 +94,13 @@ def typeChecking(col, colName):
 	elif selected[0] == "number":
 		colType = type(0.2)
 
-	print colType
+	print(colType)
 	newCol = filterCorrectTypes(col, colType)
 
 	return newCol, colType
 
 def filterCorrectTypes(col, correctType):
-	print [x for x in col if (type(x) == correctType)]
+	print ([x for x in col if (type(x) == correctType)])
 	return [x for x in col if (type(x) == correctType)]
 
 # def outlier_detection(col, options):
@@ -120,8 +121,8 @@ def outlier_detection(col, options):
 	for i in range(len(forest_outliers)):
 		if forest_outliers[i] == -1: outlier_index.append(i)
 	for i in outlier_index:
-		print "is "+ str(col[i]) +" an outlier?"
-	print "outliers detected in line numbers: " + str(outlier_index)
+		print("is " + str(col[i]) + " an outlier?")
+	print("outliers detected in line numbers: " + str(outlier_index))
 	return outlier_index
 
 def detect_dup(col):
@@ -131,7 +132,8 @@ def detect_dup(col):
 		for j in range(i+1, len(col)):
 			if col[i] == col[j]:
 				dups.append([i, j])
-				print "Are line " + str(i) + " and line " + str(j) + " duplicates?"
+				print("Are line " + str(i) + " and line " + str(j) + " duplicates?")
+
 
 # def detect_irrelevant(col, restriction):
 # 	# let users add restrictions to a certain col and remove lines from further processing
@@ -157,7 +159,7 @@ def missing_non_numeric(col):
 		if col[i] == "":
 			col[i] = "missing"
 			missing.append[i]
-	print col
+	print(col)
 	return missing
 
 def missing_numeric(col, options):
@@ -168,7 +170,7 @@ def missing_numeric(col, options):
 		if col[i] == '':
 			col[i] = 0
 			missing.append[i]
-	print col
+	print(col)
 	return missing
 
 def process_all_cols(input_file, f, output_file):
@@ -179,7 +181,7 @@ def process_all_cols(input_file, f, output_file):
 		jsonobject = json.loads(line)
 		temp_col = []
 		temp_col = f(jsonobject.values()[0])
-		print temp_col
+		print(temp_col)
 		json.dump({jsonobject.keys()[0]:temp_col}, outputfile)
 	inputfile.close()
 	outputfile.close()
@@ -200,22 +202,23 @@ def openFile(filepath):
 				title = "Would you like to check for potential misspelled entries?"
 				options = ["yes", "no"]
 				selected = pick(options, title)
-				print selected
+				print(selected)
 				if selected[0] == "yes":
 					y = fuzzymatching(z)
-					print y
+					print(y)
 
 				title = "Would you like to check for any non-standard characters?"
 				options = ["yes", "no"]
 				selected = pick(options, title)
 				if selected[0] == "yes":
 					y = strip_clean(z)
-					print "strip_clean " + str(y)
+					print("strip_clean " + str(y))
 				else:
 					continue
 			elif column_type == type(0.2):
 				xo = outlier_detection(z, [1])
-				print "outliers detected " + str(xo)
+				print("outliers detected " + str(xo))
+
 
 openFile('columns.json')
 
