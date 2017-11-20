@@ -231,7 +231,7 @@ def open_file(filepath):
                 print("outliers detected " + str(xo))
 
 
-open_file('columns.json')
+# open_file('columns.json')
 
 # read_file('/Users/Allison/Desktop/cleaning_lib/fruits.csv', '/Users/Allison/Desktop/cleaning_lib/test1.json')
 # get_columns('/Users/Allison/Desktop/cleaning_lib/test1.json', ['fruits', 'In_stock', 'quantity'], '/Users/Allison/Desktop/cleaning_lib/columns1.json')
