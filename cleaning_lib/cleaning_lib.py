@@ -8,19 +8,13 @@ from sklearn.ensemble import IsolationForest as isolate
 # Per-column cleaning operations
 
 
-def fuzzy_match_column(col):
+def fuzzy_match_column(column):
     matched = []
-    for x in range(len(col)):
-        for y in range(x + 1, len(col)):
-            fuzzyRatio = fuzz.ratio(col[x], col[y])
+    for x in range(len(column)):
+        for y in range(x + 1, len(column)):
+            fuzzyRatio = fuzz.ratio(column[x], column[y])
             if fuzzyRatio > 70:
                 matched.append([x, y])
-                print(str(col[x]) + " and " + str(col[y]) + " are similar: " + str(fuzzyRatio))
-                # print "are these two the same?"
-            else:
-                print(str(col[x]) + " and " + str(col[y]) + " are different: " + str(fuzzyRatio))
-                continue
-    print("these are the indices of the similar strings: " + str(matched))
     return matched
 
 
@@ -32,7 +26,7 @@ def check_type_column(column):
     numberRows = []
     letterRows = []
 
-    for x in range(0, len(column)):
+    for x in range(len(column)):
         try:
             column[x] = float(column[x])
             numberRows.append(x)
@@ -59,10 +53,8 @@ def outlier_detection_column(col):
     forest_outliers = forest.predict(arr)
     outlier_index = []
     for i in range(len(forest_outliers)):
-        if forest_outliers[i] == -1: outlier_index.append(i)
-    for i in outlier_index:
-        print("is " + str(col[i]) + " an outlier?")
-    print("outliers detected in line numbers: " + str(outlier_index))
+        if forest_outliers[i] == -1:
+            outlier_index.append(i)
     return outlier_index
 
 
@@ -73,7 +65,6 @@ def detect_duplicates_column(col):
         for j in range(i + 1, len(col)):
             if col[i] == col[j]:
                 dups.append([i, j])
-                print("Are line " + str(i) + " and line " + str(j) + " duplicates?")
 
 
 # Utilities
