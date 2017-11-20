@@ -1,3 +1,6 @@
+# Server state
+uploads/
+
 # Intellij
 *.xml
 *.iml
