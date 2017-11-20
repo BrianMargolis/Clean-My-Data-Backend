@@ -233,7 +233,7 @@ def open_file(filepath):
 
 open_file('columns.json')
 
-# read_file('/Users/Allison/Desktop/clean_my_data/fruits.csv', '/Users/Allison/Desktop/clean_my_data/test1.json')
-# get_columns('/Users/Allison/Desktop/clean_my_data/test1.json', ['fruits', 'In_stock', 'quantity'], '/Users/Allison/Desktop/clean_my_data/columns1.json')
+# read_file('/Users/Allison/Desktop/cleaning_lib/fruits.csv', '/Users/Allison/Desktop/cleaning_lib/test1.json')
+# get_columns('/Users/Allison/Desktop/cleaning_lib/test1.json', ['fruits', 'In_stock', 'quantity'], '/Users/Allison/Desktop/cleaning_lib/columns1.json')
 
 # ["distance from earth's center", 'depth', 'p-wave velocity', 's-wave velocity', 'density']
