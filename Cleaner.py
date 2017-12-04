@@ -8,6 +8,7 @@ class Cleaner():
     options = {}
 
     data = None
+    errors = None
 
     def __init__(self, file_name, options):
         self.file_name = file_name
@@ -18,13 +19,13 @@ class Cleaner():
 
     def identify_errors(self):
         error_counts = np.zeros_like(self.data)
-        if "Fuzzy Matching Enabled" in self.options and self.options["Fuzzy Matching Enabled"]:
+        if "Duplicates" in self.options:
             error_counts += self.duplicates()
 
-        if "Outlier Detection Enabled" in self.options and self.options["Outlier Detection Enabled"]:
+        if "Outliers" in self.options:
             error_counts += self.outliers()
 
-        if "Duplicate Detection Enabled" in self.options and self.options["Duplicate Detection Enabled"]:
+        if "Wrong Types" in self.options:
             error_counts += self.wrong_types()
 
         self.errors = error_counts > 0
@@ -37,3 +38,18 @@ class Cleaner():
 
     def wrong_types(self):
         return error_detection.wrong_types(self.data)
+
+    def get_errors(self):
+        return self.errors
+
+    def get_column_error_rates(self):
+        assert self.errors is not None
+        return error_detection.get_column_error_rates(self.errors)
+
+    def get_column_statistics(self):
+        assert self.data is not None
+
+        if "alpha" in self.options:
+            return error_detection.get_column_statistics(self.data, self.options['alpha'])
+        else:
+            return error_detection.get_column_statistics(self.data)
