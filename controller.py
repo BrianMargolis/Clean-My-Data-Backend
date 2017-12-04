@@ -1,8 +1,8 @@
+import os
 import random
 import string
 
-import os
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_login import LoginManager
 
@@ -33,32 +33,15 @@ def identify_errors():
         json = request.json
         file_name = json["file_name"]
         options = json["options"]
-        cleaner = Cleaner(file_name, options)
+        cleaner = Cleaner(os.path.join(app.config['UPLOAD_FOLDER'], file_name), options)
         cleaner.identify_errors()
+        column_error_rates = cleaner.get_column_error_rates()
+        column_stats = [s.to_dictionary() for s in cleaner.get_column_statistics()]
+        response = {"error_rates": column_error_rates,
+                    "stats": column_stats}
+        print(response)
+        return jsonify(response)
 
-        download = "download" in json and json["download"]
-        if download:
-            return send_from_directory(app.config['UPLOAD_FOLDER'], file_name)
-        else:
-            # get bad line numbers from cleaner
-            pass
-
-
-@app.route("/clean_data", methods=['POST'])
-def clean_data():
-    if request.method == "POST":
-        json = request.json
-        file_name = json["file_name"]
-        errors = json["errors"]
-        cleaner = Cleaner(file_name, {})
-        cleaner.clean_data(errors)
-
-        download = "download" in json and json["download"]
-        if download:
-            return send_from_directory(app.config['UPLOAD_FOLDER'], file_name)
-        else:
-            # get bad line numbers from cleaner
-            pass
 
 def get_file_name():
     N = 15
