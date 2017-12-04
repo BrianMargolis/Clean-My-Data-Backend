@@ -10,12 +10,15 @@ from sklearn.ensemble import IsolationForest as isolate
 
 def fuzzy_match_column(column):
     matched = []
+    error_col = column
     for x in range(len(column)):
         for y in range(x + 1, len(column)):
             fuzzyRatio = fuzz.ratio(column[x], column[y])
             if fuzzyRatio > 70:
-                matched.append([x, y])
-    return matched
+                error_col[x] = 1
+            else:
+                error_col[x] = 0
+    return error_col
 
 
 def check_type_column(column):
@@ -25,6 +28,8 @@ def check_type_column(column):
     letterCount = 0
     numberRows = []
     letterRows = []
+    col_type = "number"
+    error_col = column
 
     for x in range(len(column)):
         try:
@@ -36,13 +41,18 @@ def check_type_column(column):
             letterRows.append(x)
             letterCount += 1
 
-        if letterCount >= numberCount:
-            return column, numberRows
+    if letterCount > numberCount:
+        col_type = "letter"
+    for x in range(len(column)):
+        if col_type == "letter":
+            if x in numberRows:
+                error_col[x] = 1
+            else: error_col[x] = 0
         else:
-            return column, letterRows
-            # this function returns the cleaned column array
-            # it also returns the line numbers of the type we don't think it is (the lines where error might be)
-
+            if x in letterRows:
+                error_col[x] = 1
+            else: error_col[x] = 0
+    return error_col
 
 def outlier_detection_column(col):
     # isolation forest to detect outliers, options to be added
@@ -55,16 +65,13 @@ def outlier_detection_column(col):
     for i in range(len(forest_outliers)):
         if forest_outliers[i] == -1:
             outlier_index.append(i)
-    return outlier_index
+    error_col = col
+    for i in range(len(error_col)):
+        if i in outlier_index:
+            error_col[i] = 1
+        else: error_col[i] = 0
+    return error_col
 
-
-def detect_duplicates_column(col):
-    # lets users choose what pk is by specifying col.
-    dups = []
-    for i in range(len(col)):
-        for j in range(i + 1, len(col)):
-            if col[i] == col[j]:
-                dups.append([i, j])
 
 
 # Utilities
