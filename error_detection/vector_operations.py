@@ -29,11 +29,14 @@ def wrong_types(vector):
 
 
 def outliers(vector):
-    vector = vector.reshape(-1, 1)
+    error = np.zeros_like(vector)
 
-    forest = isolate()
-    forest.fit(vector)
-    forest_outliers = forest.predict(vector)
-    error = [forest_outliers == 1]
+    if not np.isnan(vector).any():
+        vector = vector.reshape(-1, 1)
+        forest = isolate()
+
+        forest.fit(vector)
+        forest_outliers = forest.predict(vector)
+        error = [forest_outliers == 1]
 
     return error

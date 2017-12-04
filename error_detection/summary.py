@@ -1,4 +1,5 @@
 import numpy as np
+import json
 from scipy import stats
 
 
@@ -30,3 +31,9 @@ class ColumnStats:
         self.confidence_interval = confidence_interval
         self.low_outliers = low_outliers
         self.high_outliers = high_outliers
+
+    def to_dictionary(self):
+        if not np.isnan(self.mean):
+            return self.__dict__
+        else:
+            return {}
