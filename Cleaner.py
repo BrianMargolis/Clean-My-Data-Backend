@@ -1,32 +1,39 @@
-from cleaning_lib import cleaning_lib
+import numpy as np
+
+from error_detection import error_detection
+
 
 class Cleaner():
-    file_path = ""
+    file_name = ""
     options = {}
 
-    def __init__(self, file_path, options):
-        self.file_path = file_path  # fully qualified path to the csv file on disk
-        self.options = options  # object with necessary parameters for e
+    data = None
+
+    def __init__(self, file_name, options):
+        self.file_name = file_name
+        self.options = options
+
+        self.data = np.genfromtxt(file_name, delimiter=',')
+        self.errors = np.zeros_like(self.data)
 
     def identify_errors(self):
-        pass
-        errors = []
-        if self.options["Fuzzy Matching"]:
-            errors += self.fuzzy_matching()
+        error_counts = np.zeros_like(self.data)
+        if "Fuzzy Matching Enabled" in self.options and self.options["Fuzzy Matching Enabled"]:
+            error_counts += self.duplicates()
 
-        if self.options["Outlier Detection"]:
-            errors += self.outlier_detection()
+        if "Outlier Detection Enabled" in self.options and self.options["Outlier Detection Enabled"]:
+            error_counts += self.outliers()
 
-        # etc.
-        return errors
+        if "Duplicate Detection Enabled" in self.options and self.options["Duplicate Detection Enabled"]:
+            error_counts += self.wrong_types()
 
-    def clean_data(self, errors):
-        pass
+        self.errors = error_counts > 0
 
-    # Should overwrite the file, return nothing
-    def fuzzy_matching(self):
-        pass
+    def duplicates(self):
+        return error_detection.duplicates(self.data)
 
-    # Should overwrite the file, return nothing
-    def outlier_detection(self):
-        pass
+    def outliers(self):
+        return error_detection.outliers(self.data)
+
+    def wrong_types(self):
+        return error_detection.wrong_types(self.data)
