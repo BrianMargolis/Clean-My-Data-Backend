@@ -15,6 +15,9 @@ class Cleaner():
         self.options = options
 
         self.data = np.genfromtxt(file_name, delimiter=',')
+        if options['file_has_headers']:
+            self.data = self.data[1:]
+
         self.errors = np.zeros_like(self.data)
 
     def identify_errors(self):
