@@ -65,7 +65,4 @@ class ErrorDetector():
     def get_column_summary_statistics(self):
         assert self.matrix is not None
 
-        if "alpha" in self.options:
-            return post_processing.get_column_summary_statistics(self.matrix, self.options['alpha'])
-        else:
-            return post_processing.get_column_summary_statistics(self.matrix)
+        return post_processing.get_column_summary_statistics(self.matrix)
