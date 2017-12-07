@@ -13,7 +13,8 @@ def get_column_summary_statistics(matrix, alpha=.95):
 
     for i, col in enumerate(matrix.data.T):
         data_type = matrix.types[i]
-        if data_type == data_type.NUMBER and data_type.is_consistent:
+        if data_type.data_type == data_type.NUMBER and data_type.is_consistent:
+            col = col.astype(float)
             mean = np.mean(col)
             standard_deviation = np.std(col)
             conf_int = stats.norm.interval(alpha, loc=mean, scale=standard_deviation)
@@ -22,7 +23,9 @@ def get_column_summary_statistics(matrix, alpha=.95):
 
             statistics.append(i, mean, standard_deviation, conf_int, low_outliers, high_outliers)
 
+
     return statistics
+
 
 
 class SummaryStats:
