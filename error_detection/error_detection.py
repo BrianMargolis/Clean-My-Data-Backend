@@ -1,6 +1,5 @@
 import numpy as np
-import error_detection.vector_operations as vector_ops
-import error_detection.summary as summary
+import error_detection.error_detection_vector_ops as vector_ops
 
 
 def duplicates(matrix, fuzzy=False, fuzzy_ratio_threshold=70):
@@ -16,12 +15,9 @@ def outliers(matrix):
 
 
 def extend_vector_op_to_matrix(matrix, vector_op, vector_op_args=()):
-    return np.array([vector_op(column, *vector_op_args) for column in matrix.T]).T
+    # return np.array([vector_op(column, *vector_op_args) for column in matrix.data.T]).T
+    o = []
+    for i, column in enumerate(matrix.data.T):
+        o.append(vector_op(column, matrix.types[i], *vector_op_args))
 
-
-def get_column_error_rates(error_matrix):
-    return summary.get_column_error_rates(error_matrix)
-
-
-def get_column_statistics(data_matrix, alpha=.95):
-    return summary.get_column_statistics(data_matrix, alpha)
+    return np.array(o).T

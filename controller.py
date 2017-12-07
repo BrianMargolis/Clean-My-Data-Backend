@@ -6,7 +6,7 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from flask_login import LoginManager
 
-from Cleaner import Cleaner
+from error_detection.ErrorDetector import ErrorDetector
 
 app = Flask(__name__)
 login_manager = LoginManager()
@@ -33,12 +33,12 @@ def identify_errors():
         json = request.json
         file_name = json["file_name"]
         options = json["options"]
-        cleaner = Cleaner(os.path.join(app.config['UPLOAD_FOLDER'], file_name), options)
+        cleaner = ErrorDetector(os.path.join(app.config['UPLOAD_FOLDER'], file_name), options)
         cleaner.identify_errors()
         column_error_rates = cleaner.get_column_error_rates()
-        column_stats = [s.to_dictionary() for s in cleaner.get_column_statistics()]
+        column_stats = cleaner.get_column_summary_statistics().to_dictionary()
         response = {"error_rates": column_error_rates,
-                    "stats": column_stats}
+                    "summary_stats": column_stats}
         print(response)
         return jsonify(response)
 
