@@ -33,13 +33,16 @@ def identify_errors():
         json = request.json
         file_name = json["file_name"]
         options = json["options"]
+
         cleaner = ErrorDetector(os.path.join(app.config['UPLOAD_FOLDER'], file_name), options)
         cleaner.identify_errors()
+
         column_error_rates = cleaner.get_column_error_rates()
-        column_stats = cleaner.get_column_summary_statistics().to_dictionary()
+        column_stats = cleaner.get_column_summary_statistics().serialize()
+
         response = {"error_rates": column_error_rates,
                     "summary_stats": column_stats}
-        print(response)
+
         return jsonify(response)
 
 
@@ -53,4 +56,5 @@ if __name__ == '__main__':
     login_manager.init_app(app)
     CORS(app)
     app.config['UPLOAD_FOLDER'] = app.root_path + '/uploads'
-    app.run(debug=True)
+    debug = False
+    app.run(debug=debug)

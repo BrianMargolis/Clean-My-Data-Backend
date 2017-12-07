@@ -4,15 +4,21 @@ from error_detection import error_detection, post_processing
 from error_detection.Matrix import Matrix
 
 
-class ErrorDetector():
+class ErrorDetector:
     file_name = ""
-    options = {}
+    options = {}  # Dictionary of options and parameters for error identification.
 
     data = None
     matrix = None
     errors = None
 
     def __init__(self, file_name, options):
+        """
+        Create an error detector object. Run identify_errors 
+        
+        :param file_name: fully qualified path to the CSV file
+        :param options: options dictionary from the HTTP request
+        """
         self.file_name = file_name
         self.options = options
 
@@ -25,7 +31,13 @@ class ErrorDetector():
         self.errors = np.zeros_like(self.data)
 
     def identify_errors(self):
+        """
+        Runs the error detection functions specified in the options dictionary.
+        """
+        assert self.data is not None and self.matrix is not None
+
         error_counts = np.zeros_like(self.data)
+
         if self.options['duplicates']['enabled']:
             error_counts += self.duplicates()
 
@@ -38,6 +50,9 @@ class ErrorDetector():
         self.errors = error_counts > 0
 
     def duplicates(self):
+        """
+        Get a boolean matrix representing the locations of duplicates in the data set.
+        """
         options = self.options['duplicates']['options']
         fuzzy, fuzzy_ratio_threshold = False, 70
 
@@ -50,19 +65,31 @@ class ErrorDetector():
         return error_detection.duplicates(self.matrix, fuzzy, fuzzy_ratio_threshold)
 
     def outliers(self):
+        """
+        Get a boolean matrix representing the locations of outliers in the data set.
+        """
         return error_detection.outliers(self.matrix)
 
     def wrong_types(self):
+        """
+        Get a boolean matrix representing the locations of data that has the wrong type.
+        """
         return error_detection.wrong_types(self.matrix)
 
     def get_errors(self):
         return self.errors
 
     def get_column_error_rates(self):
+        """
+        Get an array of the error rates expressed as a decimal in string form.
+        """
         assert self.errors is not None
         return post_processing.get_column_error_rates(self.errors)
 
     def get_column_summary_statistics(self):
+        """
+        Get a summary statistics object with information about the mean, standard deviation, confidence interval, and outliers of each column.
+        """
         assert self.matrix is not None
 
         return post_processing.get_column_summary_statistics(self.matrix)

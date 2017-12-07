@@ -9,6 +9,15 @@ def get_column_error_rates(error):
 
 
 def get_column_summary_statistics(matrix, alpha=.95):
+    """
+    Get a summary statistics object with information about the mean, standard deviation, confidence interval, and outliers of each column.
+
+
+    :param matrix: a Matrix object
+    :param alpha: the confidence level of the interval. Between 0 and 1.
+
+    :return: SummaryStats object
+    """
     statistics = SummaryStats()
 
     for i, col in enumerate(matrix.data.T):
@@ -23,9 +32,7 @@ def get_column_summary_statistics(matrix, alpha=.95):
 
             statistics.append(i, mean, standard_deviation, conf_int, low_outliers, high_outliers)
 
-
     return statistics
-
 
 
 class SummaryStats:
@@ -49,5 +56,10 @@ class SummaryStats:
             self.low_outliers.append(low_outliers)
             self.high_outliers.append(high_outliers)
 
-    def to_dictionary(self):
+    def serialize(self):
+        """
+        Serializes an instance of SummaryStats
+
+        :return: serialized string representation
+        """
         return self.__dict__
