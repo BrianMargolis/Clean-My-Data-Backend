@@ -45,7 +45,7 @@ class ErrorDetector():
             if option['name'] == 'fuzzy':
                 fuzzy = option['value']
             elif option['name'] == 'fuzzy_ratio_threshold':
-                fuzzy_ratio_threshold = option['value']
+                fuzzy_ratio_threshold = float(option['value'])
 
         return error_detection.duplicates(self.matrix, fuzzy, fuzzy_ratio_threshold)
 
